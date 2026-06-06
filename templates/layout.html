@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+<div class="app-layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">✅</div>
+      <span>Task<em>Flow</em></span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <a href="{% url 'dashboard' %}" class="nav-item {% if page == 'dashboard' %}active{% endif %}">
+        <span class="nav-icon">🏠</span> Dashboard
+      </a>
+      <a href="{% url 'task_list' %}" class="nav-item {% if page == 'tasks' %}active{% endif %}">
+        <span class="nav-icon">📋</span> All Tasks
+        {% if task_count %}<span class="nav-badge">{{ task_count }}</span>{% endif %}
+      </a>
+      <a href="{% url 'task_create' %}" class="nav-item">
+        <span class="nav-icon">➕</span> New Task
+      </a>
+
+      <div class="nav-section-label">Filters</div>
+      <a href="{% url 'task_list' %}?status=todo" class="nav-item">
+        <span class="nav-icon">📌</span> To Do
+      </a>
+      <a href="{% url 'task_list' %}?status=in_progress" class="nav-item">
+        <span class="nav-icon">🔄</span> In Progress
+      </a>
+      <a href="{% url 'task_list' %}?status=completed" class="nav-item">
+        <span class="nav-icon">✅</span> Completed
+      </a>
+      <a href="{% url 'task_list' %}?starred=1" class="nav-item">
+        <span class="nav-icon">⭐</span> Starred
+      </a>
+
+      <div class="nav-section-label">Organize</div>
+      <a href="{% url 'category_list' %}" class="nav-item {% if page == 'categories' %}active{% endif %}">
+        <span class="nav-icon">🏷️</span> Categories
+      </a>
+      <a href="{% url 'profile' %}" class="nav-item {% if page == 'profile' %}active{% endif %}">
+        <span class="nav-icon">👤</span> Profile
+      </a>
+    </nav>
+
+    <div class="sidebar-user">
+      <div class="user-avatar">{{ request.user.first_name|first|upper }}{{ request.user.last_name|first|upper }}</div>
+      <div class="user-info">
+        <div class="user-name">{{ request.user.get_full_name|default:request.user.username }}</div>
+        <div class="user-email">{{ request.user.email|truncatechars:22 }}</div>
+      </div>
+      <div class="user-actions">
+        <form method="post" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button type="submit" class="btn-icon" title="Logout">🚪</button>
+        </form>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-content">
+    {% if messages %}
+    <div class="messages-container">
+      {% for message in messages %}
+      <div class="alert alert-{{ message.tags|default:'info' }}">
+        {% if message.tags == 'success' %}✅{% elif message.tags == 'error' %}❌{% else %}ℹ️{% endif %}
+        {{ message }}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+  </main>
+</div>
+{% endblock %}

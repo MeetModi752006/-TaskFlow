@@ -1,0 +1,44 @@
+{% extends 'layout.html' %}
+{% block title %}Profile — TaskFlow{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <h2>👤 Profile</h2>
+    <p>Manage your account settings</p>
+  </div>
+</div>
+<div class="page-body">
+  <div class="profile-header">
+    <div class="profile-avatar">{{ request.user.first_name|first|upper }}{{ request.user.last_name|first|upper }}</div>
+    <div class="profile-info">
+      <h2>{{ request.user.get_full_name|default:request.user.username }}</h2>
+      <p>@{{ request.user.username }} &nbsp;•&nbsp; Member since {{ request.user.date_joined|date:"M Y" }}</p>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:900px;">
+    <div class="form-card">
+      <div class="card-title" style="margin-bottom:20px;">✏️ Edit Profile</div>
+      <form method="post">
+        {% csrf_token %}
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">First Name</label>{{ form.first_name }}</div>
+          <div class="form-group"><label class="form-label">Last Name</label>{{ form.last_name }}</div>
+        </div>
+        <div class="form-group"><label class="form-label">Email</label>{{ form.email }}</div>
+        <div class="form-group"><label class="form-label">Username</label><input class="form-input" value="{{ request.user.username }}" disabled/></div>
+        <div class="form-actions"><button type="submit" class="btn btn-primary">Save Changes</button></div>
+      </form>
+    </div>
+    <div class="form-card">
+      <div class="card-title" style="margin-bottom:20px;">🔑 Security</div>
+      <p style="color:var(--text-secondary);font-size:14px;margin-bottom:20px;">Keep your account secure by using a strong, unique password.</p>
+      <a href="{% url 'change_password' %}" class="btn btn-secondary">Change Password</a>
+      <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border);">
+        <div class="card-title" style="margin-bottom:8px;font-size:13px;">Account Info</div>
+        <p style="font-size:13px;color:var(--text-secondary);">Joined: <strong>{{ request.user.date_joined|date:"N j, Y" }}</strong></p>
+        <p style="font-size:13px;color:var(--text-secondary);margin-top:6px;">Last login: <strong>{{ request.user.last_login|date:"N j, Y g:i A"|default:"Never" }}</strong></p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

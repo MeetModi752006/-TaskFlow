@@ -1,0 +1,17 @@
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.dashboard, name='dashboard'),
+    path('list/', views.task_list, name='task_list'),
+    path('create/', views.task_create, name='task_create'),
+    path('<int:pk>/', views.task_detail, name='task_detail'),
+    path('<int:pk>/edit/', views.task_edit, name='task_edit'),
+    path('<int:pk>/delete/', views.task_delete, name='task_delete'),
+    path('<int:pk>/toggle-status/', views.task_toggle_status, name='task_toggle_status'),
+    path('<int:pk>/toggle-star/', views.task_toggle_star, name='task_toggle_star'),
+    path('categories/', views.category_list, name='category_list'),
+    path('categories/create/', views.category_create, name='category_create'),
+    path('categories/<int:pk>/edit/', views.category_edit, name='category_edit'),
+    path('categories/<int:pk>/delete/', views.category_delete, name='category_delete'),
+]

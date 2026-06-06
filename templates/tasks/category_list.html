@@ -1,0 +1,42 @@
+{% extends 'layout.html' %}
+{% block title %}Categories — TaskFlow{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <h2>🏷️ Categories</h2>
+    <p>Organize your tasks with categories</p>
+  </div>
+  <div class="page-header-right">
+    <a href="{% url 'category_create' %}" class="btn btn-primary">➕ New Category</a>
+  </div>
+</div>
+<div class="page-body">
+  {% if categories %}
+  <div class="category-grid">
+    {% for cat in categories %}
+    <div class="category-card">
+      <div class="category-icon" style="background:{{ cat.color }}22;border:1px solid {{ cat.color }}44;">
+        <span style="color:{{ cat.color }};">🏷️</span>
+      </div>
+      <div class="category-info">
+        <div class="category-name">{{ cat.name }}</div>
+        <div class="category-count">{{ cat.task_count }} task{{ cat.task_count|pluralize }}</div>
+      </div>
+      <div class="category-actions">
+        <a href="{% url 'task_list' %}?category={{ cat.pk }}" class="btn-icon" title="View tasks">👁</a>
+        <a href="{% url 'category_edit' cat.pk %}" class="btn-icon" title="Edit">✏️</a>
+        <a href="{% url 'category_delete' cat.pk %}" class="btn-icon" title="Delete" style="color:var(--red);">🗑️</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-state-icon">🏷️</div>
+    <h3>No categories yet</h3>
+    <p>Create categories to organize your tasks better.</p>
+    <a href="{% url 'category_create' %}" class="btn btn-primary">➕ Create Category</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends 'layout.html' %}
+{% block title %}{{ action }} Task — TaskFlow{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <h2>{% if action == 'Create' %}➕{% else %}✏️{% endif %} {{ action }} Task</h2>
+    <p>{% if action == 'Create' %}Add a new task to your list{% else %}Update task details{% endif %}</p>
+  </div>
+  <div class="page-header-right">
+    <a href="{% url 'task_list' %}" class="btn btn-secondary">← Back</a>
+  </div>
+</div>
+<div class="page-body">
+  <div class="form-card">
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-group">
+        <label class="form-label">Task Title *</label>
+        {{ form.title }}
+        {% if form.title.errors %}<ul class="errorlist">{% for e in form.title.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        {{ form.description }}
+      </div>
+      <div class="form-section-title">Details</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Priority</label>
+          {{ form.priority }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          {{ form.status }}
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          {{ form.category }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">Due Date</label>
+          {{ form.due_date }}
+        </div>
+      </div>
+      <div class="form-group" style="display:flex;align-items:center;gap:10px;">
+        {{ form.is_starred }}
+        <label class="form-label" style="margin:0;">⭐ Mark as Starred</label>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">{% if action == 'Create' %}Create Task{% else %}Save Changes{% endif %}</button>
+        <a href="{% url 'task_list' %}" class="btn btn-secondary">Cancel</a>
+        {% if task %}<a href="{% url 'task_delete' task.pk %}" class="btn btn-danger">Delete Task</a>{% endif %}
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

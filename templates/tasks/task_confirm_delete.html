@@ -1,0 +1,18 @@
+{% extends 'layout.html' %}
+{% block title %}Delete Task — TaskFlow{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left"><h2>🗑️ Delete Task</h2></div>
+</div>
+<div class="page-body" style="display:flex;justify-content:center;align-items:center;min-height:400px;">
+  <div class="confirm-card">
+    <div class="confirm-icon">⚠️</div>
+    <div class="confirm-title">Delete this task?</div>
+    <div class="confirm-text">You're about to permanently delete <strong>"{{ task.title }}"</strong>. This action cannot be undone.</div>
+    <div style="display:flex;gap:12px;justify-content:center;">
+      <form method="post">{% csrf_token %}<button type="submit" class="btn btn-danger">Yes, Delete It</button></form>
+      <a href="{% url 'task_list' %}" class="btn btn-secondary">Cancel</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends 'layout.html' %}
+{% block title %}{{ task.title }} — TaskFlow{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <h2>👁 Task Detail</h2>
+    <p>Viewing full task information</p>
+  </div>
+  <div class="page-header-right">
+    <a href="{% url 'task_list' %}" class="btn btn-secondary">← Back</a>
+    <a href="{% url 'task_edit' task.pk %}" class="btn btn-primary">✏️ Edit</a>
+  </div>
+</div>
+<div class="page-body">
+  <div class="task-detail-card">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px;">
+      <h1 class="task-detail-title">{% if task.is_starred %}⭐ {% endif %}{{ task.title }}</h1>
+      <div style="display:flex;gap:8px;flex-shrink:0;">
+        <a href="{% url 'task_toggle_star' task.pk %}" class="btn btn-secondary btn-sm">{% if task.is_starred %}Unstar{% else %}⭐ Star{% endif %}</a>
+        <a href="{% url 'task_toggle_status' task.pk %}" class="btn btn-success btn-sm">{% if task.status == 'completed' %}↩ Reopen{% else %}✓ Complete{% endif %}</a>
+      </div>
+    </div>
+
+    <div class="task-detail-meta">
+      <span class="badge badge-{{ task.status }}">{{ task.get_status_display }}</span>
+      <span class="badge badge-{{ task.priority }}">{{ task.get_priority_display }} Priority</span>
+      {% if task.is_overdue %}<span class="badge badge-overdue">⏰ Overdue</span>{% endif %}
+      {% if task.category %}<span class="badge" style="background:{{ task.category.color }}22;color:{{ task.category.color }};border:1px solid {{ task.category.color }}44;">{{ task.category.name }}</span>{% endif %}
+    </div>
+
+    {% if task.description %}
+    <div class="task-detail-desc">{{ task.description|linebreaks }}</div>
+    {% else %}
+    <div class="task-detail-desc" style="color:var(--text-muted);font-style:italic;">No description provided.</div>
+    {% endif %}
+
+    <div class="task-detail-grid">
+      <div class="detail-field">
+        <div class="detail-field-label">📅 Due Date</div>
+        <div class="detail-field-value">{{ task.due_date|date:"F j, Y"|default:"No due date" }}</div>
+      </div>
+      <div class="detail-field">
+        <div class="detail-field-label">🏷️ Category</div>
+        <div class="detail-field-value" style="display:flex;align-items:center;gap:8px;">
+          {% if task.category %}<span class="category-dot" style="background:{{ task.category.color }};"></span>{{ task.category.name }}{% else %}No category{% endif %}
+        </div>
+      </div>
+      <div class="detail-field">
+        <div class="detail-field-label">📌 Created</div>
+        <div class="detail-field-value">{{ task.created_at|date:"F j, Y g:i A" }}</div>
+      </div>
+      <div class="detail-field">
+        <div class="detail-field-label">🔄 Last Updated</div>
+        <div class="detail-field-value">{{ task.updated_at|date:"F j, Y g:i A" }}</div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:12px;padding-top:20px;border-top:1px solid var(--border);">
+      <a href="{% url 'task_edit' task.pk %}" class="btn btn-primary">✏️ Edit Task</a>
+      <a href="{% url 'task_delete' task.pk %}" class="btn btn-danger">🗑️ Delete</a>
+      <a href="{% url 'task_list' %}" class="btn btn-secondary">← All Tasks</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

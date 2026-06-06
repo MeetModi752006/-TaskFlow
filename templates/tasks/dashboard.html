@@ -1,0 +1,119 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block title %}Dashboard — TaskFlow{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <h2>🏠 Dashboard</h2>
+    <p>Hello, {{ request.user.first_name|default:request.user.username }}! Here's your overview.</p>
+  </div>
+  <div class="page-header-right">
+    <a href="{% url 'task_create' %}" class="btn btn-primary">➕ New Task</a>
+  </div>
+</div>
+
+<div class="page-body">
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card purple">
+      <div class="stat-icon">📋</div>
+      <div class="stat-value">{{ stats.total }}</div>
+      <div class="stat-label">Total Tasks</div>
+    </div>
+    <div class="stat-card blue">
+      <div class="stat-icon">📌</div>
+      <div class="stat-value">{{ stats.todo }}</div>
+      <div class="stat-label">To Do</div>
+    </div>
+    <div class="stat-card yellow">
+      <div class="stat-icon">🔄</div>
+      <div class="stat-value">{{ stats.in_progress }}</div>
+      <div class="stat-label">In Progress</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-icon">✅</div>
+      <div class="stat-value">{{ stats.completed }}</div>
+      <div class="stat-label">Completed</div>
+    </div>
+    <div class="stat-card red">
+      <div class="stat-icon">⏰</div>
+      <div class="stat-value">{{ stats.overdue }}</div>
+      <div class="stat-label">Overdue</div>
+    </div>
+    <div class="stat-card orange">
+      <div class="stat-icon">🚨</div>
+      <div class="stat-value">{{ stats.urgent }}</div>
+      <div class="stat-label">Urgent</div>
+    </div>
+    <div class="stat-card yellow">
+      <div class="stat-icon">⭐</div>
+      <div class="stat-value">{{ stats.starred }}</div>
+      <div class="stat-label">Starred</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 320px;gap:24px;">
+    <!-- Recent Tasks -->
+    <div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <h3 style="font-size:16px;font-weight:700;">📌 Active Tasks</h3>
+        <a href="{% url 'task_list' %}" style="font-size:13px;color:var(--accent);text-decoration:none;">View all →</a>
+      </div>
+
+      {% if recent_tasks %}
+        {% for task in recent_tasks %}
+        <div class="task-item {% if task.status == 'completed' %}completed{% endif %} {% if task.is_overdue %}overdue{% endif %}">
+          <a href="{% url 'task_toggle_status' task.pk %}" class="task-check {% if task.status == 'completed' %}done{% endif %}">{% if task.status == 'completed' %}✓{% endif %}</a>
+          <div class="task-body">
+            <div class="task-title {% if task.status == 'completed' %}done{% endif %}">{{ task.title }}</div>
+            <div class="task-meta">
+              <span class="badge badge-{{ task.status }}">{{ task.get_status_display }}</span>
+              <span class="badge badge-{{ task.priority }}">{{ task.get_priority_display }}</span>
+              {% if task.due_date %}
+                {% if task.is_overdue %}<span class="badge badge-overdue">⏰ Overdue</span>
+                {% else %}<span class="badge badge-due">📅 {{ task.due_date|date:"M j" }}</span>{% endif %}
+              {% endif %}
+              {% if task.category %}<span class="badge" style="background:{{ task.category.color }}22;color:{{ task.category.color }};border:1px solid {{ task.category.color }}44;">{{ task.category.name }}</span>{% endif %}
+            </div>
+          </div>
+          <div class="task-actions">
+            {% if task.is_starred %}<span title="Starred">⭐</span>{% endif %}
+            <a href="{% url 'task_detail' task.pk %}" class="btn-icon" title="View">👁</a>
+            <a href="{% url 'task_edit' task.pk %}" class="btn-icon" title="Edit">✏️</a>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="empty-state">
+          <div class="empty-state-icon">🎉</div>
+          <h3>All caught up!</h3>
+          <p>No active tasks right now.</p>
+          <a href="{% url 'task_create' %}" class="btn btn-primary">Add your first task</a>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Categories sidebar -->
+    <div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <h3 style="font-size:16px;font-weight:700;">🏷️ Categories</h3>
+        <a href="{% url 'category_create' %}" style="font-size:13px;color:var(--accent);text-decoration:none;">+ Add</a>
+      </div>
+      {% if categories %}
+        {% for cat in categories %}
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;">
+          <span class="category-dot" style="background:{{ cat.color }};width:12px;height:12px;border-radius:50%;flex-shrink:0;"></span>
+          <a href="{% url 'task_list' %}?category={{ cat.pk }}" style="flex:1;text-decoration:none;color:var(--text-primary);font-size:14px;font-weight:500;">{{ cat.name }}</a>
+          <span style="font-size:12px;color:var(--text-muted);">{{ cat.task_count }}</span>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div style="text-align:center;padding:24px;color:var(--text-muted);font-size:14px;">
+          <p>No categories yet</p>
+          <a href="{% url 'category_create' %}" class="btn btn-secondary btn-sm" style="margin-top:10px;">Create one</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
